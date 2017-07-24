@@ -18,31 +18,47 @@
 /* eslint-enable import/no-unresolved, import/default */
 
 /*@ngInject*/
-export default function DashboardController(dashboardService, userService, $state, $stateParams, $filter, $translate) {
-
+export default function DashboardController(dashboardService, userService, $state, $stateParams, $filter, $translate, $mdDialog, $log, $rootScope, $window) {
     var dashboardActionsList = [
         {
             onAction: function ($event, item) {
-                vm.grid.deleteItem($event, item);
+                renameDashboard(item._id);
+                //$window.location.reload();
             },
-            name: function() { return $translate.instant('action.delete') },
-            details: function() { return $translate.instant('dashboard.delete') },
-            icon: "delete"
+            name: function () { return $translate.instant('action.rename') },
+            details: function () { return $translate.instant('dashboard.rename') },
+            icon: "mode_edit",
+        },
+        {
+            onAction: function ($event, item) {
+                $log.log(item);
+                vm.grid.deleteItem($event, item);
+                
+            },
+            name: function () { return $translate.instant('action.delete') },
+            details: function () { return $translate.instant('dashboard.delete') },
+            icon: "delete",
         }
     ];
 
+    //$window.location.reload();
     var dashboardAddItemActionsList = [
         {
             onAction: function ($event) {
                 openDashboardEditor($event);
             },
-            name: function() { return $translate.instant('action.create') },
-            details: function() { return $translate.instant('dashboard.create-new-dashboard') },
+            name: function () { return $translate.instant('action.create') },
+            details: function () { return $translate.instant('dashboard.create-new-dashboard') },
             icon: "insert_drive_file"
         }
     ];
 
     var vm = this;
+
+    vm.dashboard = {
+        name: '',
+        template: ''
+    };
 
     vm.dashboardGridConfig = {
 
@@ -67,9 +83,10 @@ export default function DashboardController(dashboardService, userService, $stat
 
         onGridInited: gridInited,
 
-        addItemText: function() { return $translate.instant('dashboard.add-dashboard-text') },
-        noItemsText: function() { return $translate.instant('dashboard.no-dashboards-text') },
-        itemDetailsText: function() { return $translate.instant('dashboard.dashboard-details') },
+        addItemText: function () { return $translate.instant('dashboard.add-dashboard-text') },
+        noItemsText: function () { return $translate.instant('dashboard.no-dashboards-text') },
+        itemDetailsText: function () { return $translate.instant('dashboard.dashboard-details') },
+        renameDashboard: renameDashboard
     };
 
     if (angular.isDefined($stateParams.items) && $stateParams.items !== null) {
@@ -81,7 +98,7 @@ export default function DashboardController(dashboardService, userService, $stat
     }
 
     function deleteDashboardTitle(dashboard) {
-        return $translate.instant('dashboard.delete-dashboard-title', {dashboardName: dashboard.name});
+        return $translate.instant('dashboard.delete-dashboard-title', { dashboardName: dashboard.name });
     }
 
     function deleteDashboardText() {
@@ -89,11 +106,11 @@ export default function DashboardController(dashboardService, userService, $stat
     }
 
     function deleteDashboardsTitle(selectedCount) {
-        return $translate.instant('dashboard.delete-dashboards-title', {count: selectedCount}, 'messageformat');
+        return $translate.instant('dashboard.delete-dashboards-title', { count: selectedCount }, 'messageformat');
     }
 
     function deleteDashboardsActionTitle(selectedCount) {
-        return $translate.instant('dashboard.delete-dashboards-action-title', {count: selectedCount}, 'messageformat');
+        return $translate.instant('dashboard.delete-dashboards-action-title', { count: selectedCount }, 'messageformat');
     }
 
     function deleteDashboardsText() {
@@ -116,6 +133,32 @@ export default function DashboardController(dashboardService, userService, $stat
         return dashboardService.deleteDashboard(dashboardId);
     }
 
+    function renameDashboard(dashboardId) {
+        var name;
+        // Appending dialog to document.body to cover sidenav in docs app
+        var confirm = $mdDialog.prompt()
+            .title('Dashboard Name')
+            // .textContent('Bowser is a common name.')
+            .placeholder('Dashboard name')
+            .ariaLabel('Dashboard name')
+            .initialValue('')// Text show in textbox
+            .targetEvent(name)
+            .ok('Rename')
+            .cancel('Cancel');
+
+        //var dashboardId = $stateParams.dashboardId;
+
+        $mdDialog.show(confirm).then(function (result) {
+            vm.dashboard.name = result;
+            dashboardService.renameDashboard(dashboardId, result);
+            $window.location.reload();
+        });
+        $rootScope.loading = true;
+        
+        //dashboardService.renameDashboard(dashboardId,"AVAVB");
+        //dashboardService.getDashboard(dashboardId);
+    }
+
     function getDashboardTitle(dashboard) {
         return dashboard ? dashboard.name : '';
     }
@@ -125,11 +168,11 @@ export default function DashboardController(dashboardService, userService, $stat
             $event.stopPropagation();
         }
         if (dashboard) {
-            $state.go('home.dashboards.dashboard', {dashboardId: dashboard._id});
+            $state.go('home.dashboards.dashboard', { dashboardId: dashboard._id });
         } else {
             $state.go('home.dashboards.new');
         }
-        
+
     }
 
 }

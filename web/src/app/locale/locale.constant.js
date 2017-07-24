@@ -354,6 +354,7 @@ export default angular.module('blocky.locale', [])
                     "dashboard-load-failed-error": "Failed to load dashboard",
                     "open-existing-dashboard": "Open existing dashboard",
                     "dashboard-save-failed-error": "Failed to save dashboard",
+                    "rename": "Rename Dashboard"
                 },
                 "position": {
                     "top": "Top",

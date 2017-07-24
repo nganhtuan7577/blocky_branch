@@ -95,7 +95,7 @@ function DashboardService($http, $q, $rootScope, $filter, types, utils, userServ
         }, function fail(response) {
             deferred.reject(response.data);
         });
-        return deferred.promise;
+        return deferred.promise
     }
 
     function deleteDashboard(dashboardId) {

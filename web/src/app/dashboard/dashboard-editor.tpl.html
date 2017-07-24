@@ -23,6 +23,9 @@
                 <div ng-repeat="item in models.templates" dnd-draggable="item" dnd-effect-allowed="copy" dnd-copied="item.id = item.id + 1">
                     <div ng-if="item.type=='button'">
                         <md-button ng-disabled="true" class="button md-raised md-primary">{{item.type}}</md-button>
+                        <div>
+                            {{item.name}}
+                        </div>
                     </div>
 
                     <div ng-if="item.type=='switch'">
@@ -66,7 +69,25 @@
                         <div>to topic:</div>
                         <input type="text" ng-model="models.selected.clickMessage.topic" style="margin-bottom: 5px" />
                         <div>message:</div>
-                        <input type="text" ng-model="models.selected.clickMessage.message" />
+                        <input type="text" ng-model="models.selected.clickMessage.message" /> <br><br>
+                        <div><b>Change Icon</b></div>
+                        <md-content>
+                            <div>
+                                <md-input-container>
+                                    <label>models.selected.icon</label>
+                                    <md-select ng-model="models.selected.icon">
+                                        <md-option>
+                                            android
+                                            <md-icon md-svg-icon="call:dialpad" md-menu-align-target></md-icon>
+                                        </md-option>
+                                        <md-option>
+                                            backup
+                                            <md-icon md-svg-icon="call:dialpad" md-menu-align-target></md-icon>
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                        </md-content>
                     </div>
 
                     <div ng-if="models.selected.type=='switch'">
@@ -139,7 +160,10 @@
 
 <!-- Template for a normal button item -->
 <script type="text/ng-template" id="button.html">
-    <md-button id="button_{{item.id}}" class="button md-raised md-primary" ng-click="vm.widgetAction(item)">{{item.name}}</md-button>
+    <md-button id="button_{{item.id}}" class="button md-raised md-primary" ng-click="vm.widgetAction(item)">
+        <ng-md-icon icon="{{item.icon}}"></ng-md-icon>
+    </md-button>
+    <br> {{item.name}}
 </script>
 
 <!-- Template for a normal switch item -->

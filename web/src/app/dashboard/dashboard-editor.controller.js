@@ -33,11 +33,13 @@ export default function DashboardEditorController(dashboardService, $stateParams
     vm.currentBoardId;
     vm.modelAsJson;
     vm.defaultTemplate = [
-        { type: "button", id: 2, name: "Button", clickMessage: { topic: "", message: "" } },
+        { type: "button", id: 2, name: "Button", clickMessage: { topic: "", message: "" }, icon: "" },
         { type: "switch", id: 2, name: "Switch", value: 1, onMessage: { topic: "", message: "" }, offMessage: { topic: "", message: "" } },
         { type: "slider", id: 2, name: "Slider", min: 0, max: 100, value: 0, changedMessage: { topic: "" } },
     ];
-
+    vm.icons = ["fingerprint", "grade", "get_app", "home", "launch"].map(function (icon) {
+        return { abbrev: icon };
+    });
     if (dashboardId) { // Load existing dashboard
         $rootScope.loading = true;
         dashboardService.getDashboard(dashboardId).then(
@@ -65,7 +67,8 @@ export default function DashboardEditorController(dashboardService, $stateParams
                     {
                         "topic": "openDoor",
                         "message": 1
-                    }
+                    },
+                    "icon": "home"
                 }
             ]
         };
